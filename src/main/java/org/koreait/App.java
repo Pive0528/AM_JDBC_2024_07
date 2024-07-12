@@ -60,7 +60,93 @@ public class App {
             return -1;
         }
 
-        if (cmd.equals("article write")) {
+        if (cmd.equals("member join")) {
+            String loginId = null;
+            String loginPw = null;
+            String loginPwConfirm = null;
+            String name = null;
+
+            System.out.println("==회원가입==");
+            while (true) {
+                System.out.print("로그인 아이디 : ");
+                loginId = sc.nextLine().trim();
+
+                if (loginId.length() == 0 || loginId.contains(" ")) {
+                    System.out.println("아이디 똑바로 써");
+                    continue;
+                }
+
+                SecSql sql = new SecSql();
+
+                sql.append("SELECT COUNT(*) > 0");
+                sql.append("FROM `member`");
+                sql.append("WHERE loginId = ?;", loginId);
+
+                boolean isLoindIdDup = DBUtil.selectRowBooleanValue(conn, sql);
+
+                if (isLoindIdDup) {
+                    System.out.println(loginId + "는(은) 이미 사용중");
+                    continue;
+                }
+                break;
+            }
+            while (true) {
+                System.out.print("비밀번호 : ");
+                loginPw = sc.nextLine().trim();
+
+                if (loginPw.length() == 0 || loginPw.contains(" ")) {
+                    System.out.println("비번 똑바로 입력해");
+                    continue;
+                }
+
+                boolean loginPwCheck = true;
+
+                while (true) {
+                    System.out.print("비밀번호 확인 : ");
+                    loginPwConfirm = sc.nextLine().trim();
+
+                    if (loginPwConfirm.length() == 0 || loginPwConfirm.contains(" ")) {
+                        System.out.println("비번 확인 똑바로 써");
+                        continue;
+                    }
+                    if (loginPw.equals(loginPwConfirm) == false) {
+                        System.out.println("일치하지 않아");
+                        loginPwCheck = false;
+                    }
+                    break;
+                }
+                if (loginPwCheck) {
+                    break;
+                }
+            }
+
+            while (true) {
+                System.out.print("이름 : ");
+                name = sc.nextLine();
+
+                if (name.length() == 0 || name.contains(" ")) {
+                    System.out.println("이름 똑바로 써");
+                    continue;
+                }
+                break;
+            }
+
+
+            SecSql sql = new SecSql();
+
+            sql.append("INSERT INTO `member`");
+            sql.append("SET regDate = NOW(),");
+            sql.append("updateDate = NOW(),");
+            sql.append("loginId = ?,", loginId);
+            sql.append("loginPw= ?,", loginPw);
+            sql.append("name = ?;", name);
+
+            int id = DBUtil.insert(conn, sql);
+
+            System.out.println(id + "번 회원이 생성되었습니다");
+
+
+        } else if (cmd.equals("article write")) {
             System.out.println("==글쓰기==");
             System.out.print("제목 : ");
             String title = sc.nextLine();
@@ -80,9 +166,7 @@ public class App {
             System.out.println(id + "번 글이 생성되었습니다");
 
 
-        }
-
-        else if (cmd.equals("article list")) {
+        } else if (cmd.equals("article list")) {
             System.out.println("==목록==");
 
             List<Article> articles = new ArrayList<>();
@@ -108,9 +192,7 @@ public class App {
             for (Article article : articles) {
                 System.out.printf("  %d     /   %s   \n", article.getId(), article.getTitle());
             }
-        }
-
-        else if (cmd.startsWith("article modify")) {
+        } else if (cmd.startsWith("article modify")) {
 
             int id = 0;
 
@@ -153,9 +235,7 @@ public class App {
             DBUtil.update(conn, sql);
 
             System.out.println(id + "번 글이 수정되었습니다.");
-        }
-
-        else if (cmd.startsWith("article detail")) {
+        } else if (cmd.startsWith("article detail")) {
 
             int id = 0;
 
@@ -187,9 +267,7 @@ public class App {
             System.out.println("수정날짜 : " + article.getUpdateDate());
             System.out.println("제목 : " + article.getTitle());
             System.out.println("내용 : " + article.getBody());
-        }
-
-        else if (cmd.startsWith("article delete")) {
+        } else if (cmd.startsWith("article delete")) {
 
             int id = 0;
 
@@ -222,7 +300,6 @@ public class App {
 
             System.out.println(id + "번 글이 삭제되었습니다.");
         }
-
         return 0;
     }
 }
