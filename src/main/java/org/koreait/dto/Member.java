@@ -7,6 +7,19 @@ public class Member {
     private String regDate;
     private String updateDate;
     private String loginId;
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", regDate='" + regDate + '\'' +
+                ", updateDate='" + updateDate + '\'' +
+                ", loginId='" + loginId + '\'' +
+                ", loginPw='" + loginPw + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     private String loginPw;
 
     public Member(int id, String regDate, String updateDate, String loginId, String loginPw, String name) {
