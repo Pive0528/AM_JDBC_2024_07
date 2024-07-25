@@ -44,7 +44,7 @@ public class MemberDao {
         if (memberMap.isEmpty()) {
             return null;
         }
-
+        //
         return new Member(memberMap);
     }
 }
